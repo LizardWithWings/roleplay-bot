@@ -3,7 +3,7 @@ const slasho = require("discord-slasho")
 const { MongoClient } = require("mongodb")
 const { CommandInteraction } = require("discord.js")
 var mongoClient
-const bioDB = mongoClient.db("rpBios").collection("savedBios")
+var bioDB
 
 //SET TO FALSE TO ENABLE DEV MODE - Bloxxer Dumbass Countermeasure 1
 const launchToPublic = false
@@ -17,8 +17,9 @@ async function connectToDB(closeConnection) {
     }
 
     try {
-        mongoClient = new MongoClient("mongodb+srv://bot:bloxxer102@cluster0.22mjy.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
+        mongoClient = new MongoClient(process.env.MONGO_URI)
         await mongoClient.connect()
+        mongoClient.db("rpBios").collection("savedBios")
         console.log("Connected to MongoDB")
     } catch(err) {
         console.warn("FAILED TO CONNECT TO MONGO:\n"+err)
@@ -76,52 +77,59 @@ const editCharacter = {
     description: "Edit one of your characters!",
     options: [
         {
-            name: "Character Name",
+            name: "char_name",
             description: "Enter the name of the character you want to update",
             type: "STRING",
             required: true
         },
         {
-            name: "New Character Name",
+            name: "new_char_name",
             description: "Enter the new name for the character here. Leave blank to keep existing one.",
             type: "STRING",
-            required: true
+            required: false
         },
         {
-            name: "New Character Description",
+            name: "new_char_desc",
             description: "Change the characters description. Leave blank to keep existing one.",
             type: "STRING",
-            required: true
+            required: false
         }
     ],
 
     async execute({interaction}) {
-        const characterName = interaction.options.getString("Character Name")
-        var newCharName = interaction.options.getString("New Character Name")
-        var newCharDesc = interaction.options.getString("New Character Description")
+        const characterName = interaction.options.getString("char_name")
+        var newCharName = interaction.options.getString("new_char_name")
+        var newCharDesc = interaction.options.getString("new_char_desc")
 
         await connectToDB()
 
         //Detecting if a file with the character name exists
-        if (bioDB.findOne({name: characterName}) == null) {
+        if (await bioDB.findOne({name: characterName}) == null) {
             interaction.reply("Failed! Character \""+characterName+"\" does not exist in the database.")
             return
         }
 
         //Update variables if no input was given
         if (newCharName == null) {
-            newCharName = false
+            await bioDB.findOne({name: characterName}).name
         }
         if (newCharDesc == null) {
-            bioDB.findOne({name: characterName}).name
+            await bioDB.findOne({name: characterName}).description
         }
 
         //Appending character file on MongoDB
-        bioDB.findAndModify({
-            query: {name: characterName},
-           // update: {name:}
-
-        })
+        try {
+            await bioDB.findAndModify({
+                query: {name: characterName},
+                update: {name: newCharName, description: newCharDesc}
+            })
+            interaction.reply("Success!")
+            connectToDB(true)
+        } catch(err) {
+            interaction.reply("Failed! Send this error message to bloxxer:\n"+err)
+            connectToDB(true)
+            return
+        }
     }
 }
 
@@ -129,7 +137,7 @@ const bot = new slasho.App({
     token: process.env.DISCORD_TOKEN,
     devGuild: "714337883116535868",
     intents: ["GUILDS"],
-    commands: [createCharacter]
+    commands: [createCharacter, editCharacter]
 })
 
 bot.launch().then(() => {

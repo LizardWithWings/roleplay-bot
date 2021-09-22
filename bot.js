@@ -119,14 +119,14 @@ const editCharacter = {
         //Appending character file on MongoDB
         bioDB.findAndModify({
             query: {name: characterName},
-            update: {name:}
+           // update: {name:}
 
         })
     }
 }
 
 const bot = new slasho.App({
-    token: "NzYzNTQ5NDc2MDM5NTU3MTIx.X35U3Q.YoN56TMebCGv23ppCEvpqGkdiyk",
+    token: process.env.DISCORD_TOKEN,
     devGuild: "714337883116535868",
     intents: ["GUILDS"],
     commands: [createCharacter]

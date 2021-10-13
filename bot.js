@@ -5,6 +5,9 @@ const { CommandInteraction } = require("discord.js")
 var mongoClient
 var bioDB
 
+//Main command script
+const cmds = require("./cmds/test.js")
+
 //SET TO FALSE TO ENABLE DEV MODE - Bloxxer Dumbass Countermeasure 1
 const launchToPublic = false
 
@@ -19,7 +22,7 @@ async function connectToDB(closeConnection) {
     try {
         mongoClient = new MongoClient(process.env.MONGO_URI)
         await mongoClient.connect()
-        mongoClient.db("rpBios").collection("savedBios")
+        bioDB = mongoClient.db("rpBios").collection("savedBios")
         console.log("Connected to MongoDB")
     } catch(err) {
         console.warn("FAILED TO CONNECT TO MONGO:\n"+err)
@@ -137,7 +140,7 @@ const bot = new slasho.App({
     token: process.env.DISCORD_TOKEN,
     devGuild: "714337883116535868",
     intents: ["GUILDS"],
-    commands: [createCharacter, editCharacter]
+    commands: [createCharacter, editCharacter, cmds.test]
 })
 
 bot.launch().then(() => {
@@ -146,4 +149,5 @@ bot.launch().then(() => {
     } else {
         bot.dev()
     }
+    console.log("Connected as "+slasho.client.user.tag)
 })

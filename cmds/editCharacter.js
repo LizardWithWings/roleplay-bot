@@ -7,10 +7,10 @@ var mongoClient
 var bioDB
 
 //MongoDB Connection Function
-async function connectToDB(closeConnection) {
-    if (closeConnection) {
+async function connectToDB(closeConnection, interaction)  {
+    if (closeConnection == true) {
         await mongoClient.close()
-        console.log("Disconnected from MongoDB.")
+        console.log("------------------------------\nDisconnected from Mongo:\n>>User: "+interaction.user.tag+" ("+interaction.user.id+")\n>>Guild: "+interaction.guild.name+" ("+interaction.guild.id+")\n------------------------------")
         return
     }
 
@@ -18,9 +18,10 @@ async function connectToDB(closeConnection) {
         mongoClient = new MongoClient(process.env.MONGO_URI)
         await mongoClient.connect()
         bioDB = mongoClient.db("rpBios").collection("savedBios")
-        console.log("Connected to MongoDB")
+        console.log("------------------------------\nConnected to Mongo:\n>>User: "+interaction.user.tag+" ("+interaction.user.id+")\n>>Guild: "+interaction.guild.name+" ("+interaction.guild.id+")\n------------------------------")
     } catch(err) {
-        console.warn("FAILED TO CONNECT TO MONGO:\n"+err)
+      interaction.reply("A mongo error has occured. Please send this to Bloxxer:\n```js\n`"+err+"\n```")
+        console.warn("------------------------------\nMongo Error:\n>>User: "+interaction.user.tag+" ("+interaction.user.id+")\n>>Guild: "+interaction.guild.name+" ("+interaction.guild.id+")\n>>Error: "+err+"\n------------------------------")
     }
 }
 
@@ -54,11 +55,12 @@ const editCharacter = {
         var newCharName = interaction.options.getString("new_char_name")
         var newCharDesc = interaction.options.getString("new_char_desc")
 
-        await connectToDB()
+        await connectToDB(false, interaction)
 
         //Detecting if a file with the character name exists
         if (await bioDB.findOne({name: characterName}) == null) {
             interaction.reply("Failed! Character \""+characterName+"\" does not exist in the database.")
+            connectToDB(true, interaction)
             return
         }
 
@@ -77,10 +79,10 @@ const editCharacter = {
                 update: {name: newCharName, description: newCharDesc}
             })
             interaction.reply("Success!")
-            connectToDB(true)
+            connectToDB(true, interaction)
         } catch(err) {
-            interaction.reply("Failed! Send this error message to Bloxxer:\n"+err)
-            connectToDB(true)
+            interaction.reply("Failed! Send this error message to Bloxxer:\n```js\n"+err+"\n```")
+            connectToDB(true, interaction)
             return
         }
     }

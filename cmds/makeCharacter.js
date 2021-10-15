@@ -7,10 +7,10 @@ var mongoClient
 var bioDB
 
 //MongoDB Connection Function
-const connectToDB = async (closeConnection) => {
+async function connectToDB(closeConnection, interaction)  {
     if (closeConnection == true) {
         await mongoClient.close()
-        console.log("Disconnected from MongoDB.")
+        console.log("------------------------------\nDisconnected from Mongo:\n>>User: "+interaction.user.tag+" ("+interaction.user.id+")\n>>Guild: "+interaction.guild.name+" ("+interaction.guild.id+")\n------------------------------")
         return
     }
 
@@ -18,9 +18,10 @@ const connectToDB = async (closeConnection) => {
         mongoClient = new MongoClient(process.env.MONGO_URI)
         await mongoClient.connect()
         bioDB = mongoClient.db("rpBios").collection("savedBios")
-        console.log("Connected to MongoDB")
+        console.log("------------------------------\nConnected to Mongo:\n>>User: "+interaction.user.tag+" ("+interaction.user.id+")\n>>Guild: "+interaction.guild.name+" ("+interaction.guild.id+")\n------------------------------")
     } catch(err) {
-        console.warn("FAILED TO CONNECT TO MONGO:\n"+err)
+      interaction.reply("A mongo error has occured. Please send this to Bloxxer:\n```js\n`"+err+"\n```")
+        console.warn("------------------------------\nMongo Error:\n>>User: "+interaction.user.tag+" ("+interaction.user.id+")\n>>Guild: "+interaction.guild.name+" ("+interaction.guild.id+")\n>>Error: "+err+"\n------------------------------")
     }
 }
 
@@ -41,13 +42,13 @@ const createCharacter = {
         //Interaction name variable
         var iname = interaction.options.getString("name")
 
-        await connectToDB()
+        await connectToDB(false, interaction)
         bioDB = mongoClient.db("rpBios").collection("savedBios")
         
         //Finding possible existing files with the same name
         if (await bioDB.findOne({name: iname}) !== null) {
            interaction.reply("Failed: A existing character with the name **"+iname+"** already exists.")
-            connectToDB(true)
+            connectToDB(true, interaction)
             return 
         }
             
@@ -60,13 +61,12 @@ const createCharacter = {
                 ownerId: interaction.member.user.id
             })
         } catch(err) {
-            interaction.reply("Failed to create document! Please show this error to Bloxxer:\n"+err)
-            connectToDB(false)
+            interaction.reply("Failed to create document! Please show this error to Bloxxer:\n```js\n`"+err+"```")
+            connectToDB(true, interaction)
             return
         }
         interaction.reply("Success!")
-        connectToDB(false)
-        console.log("Connection to MongoDB closed.")
+        connectToDB(true, interaction)
     }
 }
 

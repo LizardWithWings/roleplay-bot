@@ -46,7 +46,7 @@ const createCharacter = {
         bioDB = mongoClient.db("rpBios").collection("savedBios")
         
         //Finding possible existing files with the same name
-        if (await bioDB.findOne({name: iname}) !== null) {
+        if (await bioDB.findOne({name: iname, ownerId: interaction.user.id}) !== null) {
            interaction.reply("Failed: A existing character with the name **"+iname+"** already exists.")
             connectToDB(true, interaction)
             return 

@@ -58,7 +58,7 @@ const editCharacter = {
         await connectToDB(false, interaction)
 
         //Detecting if a file with the character name exists
-        if (await bioDB.findOne({name: characterName}) == null) {
+        if (await bioDB.findOne({name: characterName, ownerId: interaction.user.id}) == null) {
             interaction.reply("Failed! Character \""+characterName+"\" does not exist in the database.")
             connectToDB(true, interaction)
             return
@@ -66,18 +66,18 @@ const editCharacter = {
 
         //Update variables if no input was given
         if (newCharName == null) {
-            await bioDB.findOne({name: characterName}).name
+            await bioDB.findOne({name: characterName, ownerId: interaction.user.id}).name
         }
         if (newCharDesc == null) {
-            await bioDB.findOne({name: characterName}).description
+            await bioDB.findOne({name: characterName, ownerId: interaction.user.id}).description
         }
 
         //Appending character file on MongoDB
         try {
-            await bioDB.findAndModify({
-                query: {name: characterName},
-                update: {name: newCharName, description: newCharDesc}
-            })
+            await bioDB.findOneAndUpdate(
+              {name: characterName, ownerId: interaction.user.id,},
+              {name: newCharName, description: newCharDesc}
+            )
             interaction.reply("Success!")
             connectToDB(true, interaction)
         } catch(err) {

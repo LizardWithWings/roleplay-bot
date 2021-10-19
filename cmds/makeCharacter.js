@@ -3,6 +3,7 @@
 
 require("dotenv").config()
 const { MongoClient } = require("mongodb")
+const reply = require("./replyHandler.js")
 var mongoClient
 var bioDB
 
@@ -10,7 +11,7 @@ var bioDB
 async function connectToDB(closeConnection, interaction)  {
     if (closeConnection == true) {
         await mongoClient.close()
-        console.log("------------------------------\nDisconnected from Mongo:\n>>User: "+interaction.user.tag+" ("+interaction.user.id+")\n>>Guild: "+interaction.guild.name+" ("+interaction.guild.id+")\n------------------------------")
+        reply.mongoDisconnect(interaction.user.tag, interaction.user.id, interaction.guild.name, interaction.guild.id)
         return
     }
 
@@ -18,10 +19,10 @@ async function connectToDB(closeConnection, interaction)  {
         mongoClient = new MongoClient(process.env.MONGO_URI)
         await mongoClient.connect()
         bioDB = mongoClient.db("rpBios").collection("savedBios")
-        console.log("------------------------------\nConnected to Mongo:\n>>User: "+interaction.user.tag+" ("+interaction.user.id+")\n>>Guild: "+interaction.guild.name+" ("+interaction.guild.id+")\n------------------------------")
+        reply.mongoConnect(interaction.user.tag, interaction.user.id, interaction.guild.name, interaction.guild.id)\n------------------------------")
     } catch(err) {
       interaction.reply("A mongo error has occured. Please send this to Bloxxer:\n```js\n`"+err+"\n```")
-        console.warn("------------------------------\nMongo Error:\n>>User: "+interaction.user.tag+" ("+interaction.user.id+")\n>>Guild: "+interaction.guild.name+" ("+interaction.guild.id+")\n>>Error: "+err+"\n------------------------------")
+        reply.mongoError(interaction.user.tag, interaction.user.id, interaction.guild.name, interaction.guild.id, err)
     }
 }
 
@@ -33,6 +34,12 @@ const createCharacter = {
         {
             name: "name",
             description: "The name to give the character",
+            type: "STRING",
+            required: true
+        },
+        {
+            name: "description",
+            description: "The description of the character.",
             type: "STRING",
             required: true
         }

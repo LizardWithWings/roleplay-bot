@@ -3,6 +3,7 @@
 
 require("dotenv").config()
 const { MongoClient } = require("mongodb")
+const reply = require("./replyHandler.js")
 var mongoClient
 var bioDB
 
@@ -10,7 +11,7 @@ var bioDB
 async function connectToDB(closeConnection, interaction)  {
     if (closeConnection == true) {
         await mongoClient.close()
-        console.log("------------------------------\nDisconnected from Mongo:\n>>User: "+interaction.user.tag+" ("+interaction.user.id+")\n>>Guild: "+interaction.guild.name+" ("+interaction.guild.id+")\n------------------------------")
+        reply.mongoDisconnect(interaction.user.tag, interaction.user.id, interaction.guild, interaction.guild.id)
         return
     }
 
@@ -76,7 +77,8 @@ const editCharacter = {
         try {
             await bioDB.findOneAndUpdate(
               {name: characterName, ownerId: interaction.user.id,},
-              {name: newCharName, description: newCharDesc}
+              {$set: {name: newCharName, description: newCharDesc}},
+              {upsert: true}
             )
             interaction.reply("Success!")
             connectToDB(true, interaction)

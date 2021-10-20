@@ -6,6 +6,19 @@ const { MessageEmbed } = require("discord.js")
 const errorColor = "#ff0000"
 const successColor = "#00ff00"
 
+//HELP EMBED
+const help = (user) => {
+  return new MessageEmbed()
+    .setTitle("Help Menu/Command List")
+    .setDescription("Welcome to the help menu! This menu shows every command that you can run for this bot.")
+    .addField("/createcharacter", "Creates a character with a name and a description.")
+    .addField("/editcharacter", "Edits a characters name and description.")
+    .addField("/deletecharacter", "Deletes a character that has the given name.")
+    .addField("/viewcharacter", "Views a character owned by the user given")
+    .setColor("ffff00")
+    .setFooter(footerText(user.tag), user.avatarURL({dynamic: true}))
+} 
+
 //Function to make footer text cuz im lazy
 function footerText(user) {
   return "Command ran by "+user+" | Bot made by Bloxxer#8729"
@@ -103,12 +116,31 @@ const characterDeleted = (charName, user) => {
 const characterDeleteError = (charName, user, err) => {
   return new MessageEmbed()
     .setTitle("Character Deletion Error!")
-    .setDescription("There was an errror whole trying to delete your character named **"+charName+"**. Please send this error to Bloxxer#8729:\n```js\n"+err+"\n```")
+    .setDescription("There was an error while trying to delete your character named **"+charName+"**. Please send this error to Bloxxer#8729:\n```js\n"+err+"\n```")
     .setColor(errorColor)
     .setFooter(footerText(user.tag), user.avatarURL({dynamic: true}))
 }
 
+//View Character output
+const viewCharacter = (charName, charDesc, user) => {
+  return new MessageEmbed()
+    .setTitle(charName)
+    .addField("Description:", charDesc, false)
+    .setFooter(footerText(user.tag), user.avatarURL({dynamic: true}))
+}
+
+//View Character Error
+const viewCharacterError = (charName, user, err) => {
+  return new MessageEmbed()
+    .setTitle("Error in Viewing Character!")
+    .setDescription("There was an error while trying to view the character named **"+charName+"**. Please send this error to Bloxxer#8729:\n```js\n"+err+"\n```")
+    .setColor(errorColor)
+    .setFooter(footerText(user.tag), user.avatarURL({dynamic: true}))
+}
+
+
 //Exporting functions
+exports.help = help
 exports.mongoDisconnect = mongoDisconnect
 exports.mongoConnect = mongoConnect
 exports.mongoError = mongoError
@@ -121,3 +153,5 @@ exports.characterModified = characterModified
 exports.characterModifyError = characterModifyError
 exports.characterDeleted = characterDeleted
 exports.characterDeleteError = characterDeleteError
+exports.viewCharacter = viewCharacter
+exports.viewCharacterError = viewCharacterError

@@ -3,3 +3,6 @@
 
 exports.makechar = require("./makeCharacter.js").cmd
 exports.editchar = require("./editCharacter.js").cmd
+exports.deletechar = require("./deleteCharacter.js").cmd
+
+exports.test = require("./test.js").cmd

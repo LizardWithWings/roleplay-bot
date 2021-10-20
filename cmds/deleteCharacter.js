@@ -1,5 +1,5 @@
-//Make Character Command
-//Command used to create characters in the DB.
+//Delete Character Command
+//Command used to delete characters in the DB.
 
 require("dotenv").config()
 const { MongoClient } = require("mongodb")
@@ -54,20 +54,14 @@ async function connectToDB(closeConnection, interaction)  {
     }
 }
 
-const createCharacter = {
+const deleteCharacter = {
     type: "slash",
-    name: "makecharacter",
-    description: "Creates a character in the bot's database with a given name.",
+    name: "deletecharacter",
+    description: "Deletes a user's character in the bot's database.",
     options:[
         {
             name: "name",
-            description: "The name to give the character",
-            type: "STRING",
-            required: true
-        },
-        {
-            name: "description",
-            description: "The description of the character.",
+            description: "The name of the character you want to delete.",
             type: "STRING",
             required: true
         }
@@ -80,13 +74,13 @@ const createCharacter = {
         await connectToDB(false, interaction)
         bioDB = mongoClient.db("rpBios").collection("savedBios")
         
-        //Finding possible existing files with the same name
-        if (await bioDB.findOne({name: iname, ownerId: interaction.user.id}) !== null) {
+        //Checking if character exists.
+        if (await bioDB.findOne({name: iname, ownerId: interaction.user.id}) == null) {
           interaction.reply(
             {
               embeds: 
               [
-                reply.characterExists(iname, interaction.user)
+                reply.characterDoesntExist(iname, interaction.user)
               ]
             }
           )
@@ -97,19 +91,17 @@ const createCharacter = {
             
         
 
-        //Creating a new file
+        //Deleting The Character
         try {
-            await bioDB.insertOne({
-                name: interaction.options.getString("name"),
-                ownerId: interaction.member.user.id,
-                description: interaction.options.getString("description")
+            await bioDB.deleteOne({
+                name: interaction.options.getString("name")
             })
         } catch(err) {
             interaction.reply(
               {
                 embeds: 
                 [
-                  reply.characterCreateError(iname, interaction.user, err)
+                  reply.characterDeleteError(iname, interaction.user, err)
                 ]
               }
             )
@@ -120,7 +112,7 @@ const createCharacter = {
             {
               embeds: 
               [
-                reply.characterCreated(iname, interaction.user)
+                reply.characterDeleted(iname, interaction.user)
               ]
             }
           )
@@ -128,4 +120,4 @@ const createCharacter = {
     }
 }
 
-exports.cmd = createCharacter
+exports.cmd = deleteCharacter

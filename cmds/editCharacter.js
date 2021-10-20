@@ -11,20 +11,48 @@ var bioDB
 async function connectToDB(closeConnection, interaction)  {
     if (closeConnection == true) {
         await mongoClient.close()
-        reply.mongoDisconnect(interaction.user.tag, interaction.user.id, interaction.guild, interaction.guild.id)
+
+        reply.mongoDisconnect(
+          interaction.user.tag, 
+          interaction.user.id, 
+          interaction.guild.name, 
+          interaction.guild.id
+        )
+        
         return
     }
 
     try {
         mongoClient = new MongoClient(process.env.MONGO_URI)
         await mongoClient.connect()
+
         bioDB = mongoClient.db("rpBios").collection("savedBios")
-        console.log("------------------------------\nConnected to Mongo:\n>>User: "+interaction.user.tag+" ("+interaction.user.id+")\n>>Guild: "+interaction.guild.name+" ("+interaction.guild.id+")\n------------------------------")
+
+        reply.mongoConnect(
+          interaction.user.tag, 
+          interaction.user.id, 
+          interaction.guild.name, 
+          interaction.guild.id
+        )
     } catch(err) {
-      interaction.reply("A mongo error has occured. Please send this to Bloxxer:\n```js\n`"+err+"\n```")
-        console.warn("------------------------------\nMongo Error:\n>>User: "+interaction.user.tag+" ("+interaction.user.id+")\n>>Guild: "+interaction.guild.name+" ("+interaction.guild.id+")\n>>Error: "+err+"\n------------------------------")
+      interaction.reply(
+            {
+              embeds: 
+              [
+                reply.characterExists(interaction.user, err)
+              ]
+            }
+          )
+
+      reply.mongoError(
+        interaction.user.tag, 
+        interaction.user.id, 
+        interaction.guild.name, 
+        interaction.guild.id, 
+        err
+      )
     }
-}
+}   
 
 const editCharacter = {
     type: "slash", 
@@ -60,7 +88,14 @@ const editCharacter = {
 
         //Detecting if a file with the character name exists
         if (await bioDB.findOne({name: characterName, ownerId: interaction.user.id}) == null) {
-            interaction.reply("Failed! Character \""+characterName+"\" does not exist in the database.")
+            interaction.reply(
+            {
+              embeds: 
+              [
+                reply.characterDoesntExist(characterName, interaction.user)
+              ]
+            }
+          )
             connectToDB(true, interaction)
             return
         }
@@ -80,10 +115,23 @@ const editCharacter = {
               {$set: {name: newCharName, description: newCharDesc}},
               {upsert: true}
             )
-            interaction.reply("Success!")
-            connectToDB(true, interaction)
+            interaction.reply(
+            {
+              embeds: 
+              [
+                reply.characterModified(characterName, interaction.user)
+              ]
+            }
+          )
         } catch(err) {
-            interaction.reply("Failed! Send this error message to Bloxxer:\n```js\n"+err+"\n```")
+            interaction.reply(
+            {
+              embeds: 
+              [
+                reply.characterModifyError(characterName, interaction.user, err)
+              ]
+            }
+          )
             connectToDB(true, interaction)
             return
         }

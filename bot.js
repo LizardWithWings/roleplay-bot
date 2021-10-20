@@ -12,7 +12,12 @@ const bot = new slasho.App({
     token: process.env.DISCORD_TOKEN,
     devGuild: "714337883116535868",
     intents: ["GUILDS"],
-    commands: [cmds.makechar, cmds.editchar]
+    commands: [
+      cmds.makechar, 
+      cmds.editchar, 
+      cmds.deletechar,
+      //cmds.test
+      ]
 })
 
 bot.launch().then(() => {

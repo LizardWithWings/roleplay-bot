@@ -19,7 +19,7 @@ async function connectToDB(closeConnection) {
     try {
         mongoClient = new MongoClient(process.env.MONGO_URI)
         await mongoClient.connect()
-        mongoClient.db("rpBios").collection("savedBios")
+        bioDB = mongoClient.db("rpBios").collection("savedBios")
         console.log("Connected to MongoDB")
     } catch(err) {
         console.warn("FAILED TO CONNECT TO MONGO:\n"+err)
@@ -102,6 +102,7 @@ const editCharacter = {
         var newCharDesc = interaction.options.getString("new_char_desc")
 
         await connectToDB()
+        await bioDB
 
         //Detecting if a file with the character name exists
         if (await bioDB.findOne({name: characterName}) == null) {
@@ -111,10 +112,10 @@ const editCharacter = {
 
         //Update variables if no input was given
         if (newCharName == null) {
-            await bioDB.findOne({name: characterName}).name
+            newCharName = await bioDB.findOne({name: characterName}).name
         }
         if (newCharDesc == null) {
-            await bioDB.findOne({name: characterName}).description
+            newCharDesc = await bioDB.findOne({name: characterName}).description
         }
 
         //Appending character file on MongoDB

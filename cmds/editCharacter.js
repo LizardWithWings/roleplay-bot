@@ -67,22 +67,36 @@ const editCharacter = {
         },
         {
             name: "new_char_name",
-            description: "Enter the new name for the character here. Leave blank to keep existing one.",
+            description: "Enter the new name for the character here.",
             type: "STRING",
             required: false
         },
         {
             name: "new_char_desc",
-            description: "Change the characters description. Leave blank to keep existing one.",
+            description: "Change the characters description.",
             type: "STRING",
             required: false
-        }
+        },
+        {
+            name: "new_char_pfp",
+            description: "Change the characters pfp.",
+            type: "STRING",
+            required: false
+        },
+        {
+            name: "new_char_image",
+            description: "Change the characters image.",
+            type: "STRING",
+            required: false
+        },
     ],
 
     async execute({interaction}) {
         const characterName = interaction.options.getString("char_name")
         var newCharName = interaction.options.getString("new_char_name")
         var newCharDesc = interaction.options.getString("new_char_desc")
+        var newCharPfp = interaction.options.getString("new_char_pfp")
+        var newCharImg = interaction.options.getString("new_char_image")
 
         await connectToDB(false, interaction)
 
@@ -102,17 +116,23 @@ const editCharacter = {
 
         //Update variables if no input was given
         if (newCharName == null) {
-            await bioDB.findOne({name: characterName, ownerId: interaction.user.id}).name
+            newCharName = await bioDB.findOne({name: characterName, ownerId: interaction.user.id}).name
         }
         if (newCharDesc == null) {
-            await bioDB.findOne({name: characterName, ownerId: interaction.user.id}).description
+            newCharDesc = await bioDB.findOne({name: characterName, ownerId: interaction.user.id}).description
+        }
+        if (newCharPfp == null) {
+          newCharPfp = await bioDB.findOne({name: characterName, ownerId: interaction.user.id}).pfp
+        }
+        if (newCharImg == null) {
+          newCharImg = await bioDB.findOne({name: characterName, ownerId: interaction.user.id}).img
         }
 
         //Appending character file on MongoDB
         try {
             await bioDB.findOneAndUpdate(
               {name: characterName, ownerId: interaction.user.id,},
-              {$set: {name: newCharName, description: newCharDesc}},
+              {$set: {name: newCharName, description: newCharDesc, pfp: newCharPfp, img: newCharImg}},
               {upsert: true}
             )
             interaction.reply(

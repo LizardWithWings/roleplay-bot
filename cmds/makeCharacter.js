@@ -70,12 +70,26 @@ const createCharacter = {
             description: "The description of the character.",
             type: "STRING",
             required: true
+        },
+        {
+          name: "pfp",
+          description: "A small image that will be displayed when your character is viewed!",
+          type: "STRING",
+          required: false
+        },
+        {
+          name: "full_img",
+          description: "An image that will appear at the bottom of your character's embed when viewed!",
+          type: "STRING",
+          required: false
         }
     ],
 
     async execute({interaction}) {
         //Interaction name variable
         var iname = interaction.options.getString("name")
+        var pfp
+        var img
 
         await connectToDB(false, interaction)
         bioDB = mongoClient.db("rpBios").collection("savedBios")
@@ -95,14 +109,28 @@ const createCharacter = {
           return 
         }
             
-        
+        //Setting the pfp URL (if it exists)
+        if (interaction.options.getString("pfp") !== null) {
+          pfp = interaction.options.getString("image")
+        } else {
+          pfp = false
+        }
+
+        //Setting the img URL (if it exists)
+        if (interaction.options.getString("full_img") !== null) {
+          img = interaction.options.getString("full_img")
+        } else {
+          img = false
+        }
 
         //Creating a new file
         try {
             await bioDB.insertOne({
                 name: interaction.options.getString("name"),
                 ownerId: interaction.member.user.id,
-                description: interaction.options.getString("description")
+                description: interaction.options.getString("description"),
+                pfp: pfp,
+                img: img
             })
         } catch(err) {
             interaction.reply(

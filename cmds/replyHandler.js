@@ -122,11 +122,32 @@ const characterDeleteError = (charName, user, err) => {
 }
 
 //View Character output
-const viewCharacter = (charName, charDesc, user) => {
-  return new MessageEmbed()
-    .setTitle(charName)
-    .addField("Description:", charDesc, false)
-    .setFooter(footerText(user.tag), user.avatarURL({dynamic: true}))
+const viewCharacter = (charName, charDesc, charPfp, charImg, user) => {
+  if (charPfp && !charImg) {
+    return new MessageEmbed()
+      .setTitle(charName)
+      .addField("Description:", charDesc, false)
+      .setThumbnail(charPfp)
+      .setFooter(footerText(user.tag), user.avatarURL({dynamic: true}))
+  } else if (charImg && !charPfp) {
+    return new MessageEmbed()
+      .setTitle(charName)
+      .addField("Description:", charDesc, false)
+      .setImage(charImg)
+      .setFooter(footerText(user.tag), user.avatarURL({dynamic: true}))
+  } else if (charImg && charPfp) {
+    return new MessageEmbed()
+      .setTitle(charName)
+      .addField("Description:", charDesc, false)
+      .setThumbnail(charPfp)
+      .setImage(charImg)
+      .setFooter(footerText(user.tag), user.avatarURL({dynamic: true}))
+  } else if (!charPfp && !charImg) {
+    return new MessageEmbed()
+      .setTitle(charName)
+      .addField("Description:", charDesc, false)
+      .setFooter(footerText(user.tag), user.avatarURL({dynamic: true}))
+  }
 }
 
 //View Character Error

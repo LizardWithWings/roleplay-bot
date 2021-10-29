@@ -105,18 +105,28 @@ const viewCharacter = {
 
         //Viewing and outputting the character.
         try {
-            const character = await bioDB.findOne({
-                name: interaction.options.getString("name"),
-                ownerId: owner.id,
-            })
-
+          const character = await bioDB.findOne({
+              name: interaction.options.getString("name"),
+              ownerId: owner.id,
+          })
+            
+          if (character.img) {
             interaction.reply(
               {
                 embeds: [
-                  reply.viewCharacter(character.name, character.description, interaction.user)
+                  reply.viewCharacter(character.name, character.description, character.pfp,character.img, interaction.user)
                 ]
               }
             )
+          } else {
+            interaction.reply(
+              {
+                embeds: [
+                  reply.viewCharacter(character.name, character.description, false,   interaction.user)
+                ]
+              }
+            )
+          }
         } catch(err) {
             interaction.reply(
               {

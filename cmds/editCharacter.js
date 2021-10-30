@@ -78,10 +78,10 @@ const editCharacter = {
             required: false
         },
         {
-            name: "new_char_pfp",
-            description: "Change the characters pfp.",
-            type: "STRING",
-            required: false
+          name: "new_color",
+          description: "Change the embed color (HEX ONLY, Google \"color picker\").",
+          type: "STRING",
+          required: false
         },
         {
             name: "new_char_image",
@@ -95,7 +95,7 @@ const editCharacter = {
         const characterName = interaction.options.getString("char_name")
         var newCharName = interaction.options.getString("new_char_name")
         var newCharDesc = interaction.options.getString("new_char_desc")
-        var newCharPfp = interaction.options.getString("new_char_pfp")
+        var newColor = interaction.options.getString("new_color")
         var newCharImg = interaction.options.getString("new_char_image")
 
         await connectToDB(false, interaction)
@@ -134,11 +134,11 @@ const editCharacter = {
         }
         if (newCharDesc == null) {
           var x = await bioDB.findOne({name: characterName, ownerId: interaction.user.id})
-            newCharDesc = x.description
+          newCharDesc = x.description
         }
-        if (newCharPfp == null) {
+        if (newColor == null) {
           var x = await bioDB.findOne({name: characterName, ownerId: interaction.user.id})
-          newCharPfp = x.pfp
+          newColor = x.color
         }
         if (newCharImg == null) {
           var x = await bioDB.findOne({name: characterName, ownerId: interaction.user.id})
@@ -149,7 +149,7 @@ const editCharacter = {
         try {
             await bioDB.findOneAndUpdate(
               {name: characterName, ownerId: interaction.user.id,},
-              {$set: {name: newCharName, description: newCharDesc, pfp: newCharPfp, img: newCharImg}},
+              {$set: {name: newCharName, description: newCharDesc, color: newColor, img: newCharImg}},
               {upsert: true}
             )
             interaction.reply(

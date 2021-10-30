@@ -12,9 +12,10 @@ const help = (user) => {
     .setTitle("Help Menu/Command List")
     .setDescription("Welcome to the help menu! This menu shows every command that you can run for this bot.")
     .addField("/createcharacter", "Creates a character with a name and a description.")
-    .addField("/editcharacter", "Edits a characters name and description.")
+    .addField("/editcharacter", "Allows you to edit a characters name, description and/or image.")
     .addField("/deletecharacter", "Deletes a character that has the given name.")
     .addField("/viewcharacter", "Views a character owned by the user given")
+    .addField("/listcharacters", "Lists all your character's by names only.")
     .setColor("ffff00")
     .setFooter(footerText(user.tag), user.avatarURL({dynamic: true}))
 } 
@@ -122,30 +123,19 @@ const characterDeleteError = (charName, user, err) => {
 }
 
 //View Character output
-const viewCharacter = (charName, charDesc, charPfp, charImg, user) => {
-  if (charPfp && !charImg) {
-    return new MessageEmbed()
-      .setTitle(charName)
-      .addField("Description:", charDesc, false)
-      .setThumbnail(charPfp)
-      .setFooter(footerText(user.tag), user.avatarURL({dynamic: true}))
-  } else if (charImg && !charPfp) {
+const viewCharacter = (charName, charDesc, charImg, color, user) => {
+  if (charImg) {
     return new MessageEmbed()
       .setTitle(charName)
       .addField("Description:", charDesc, false)
       .setImage(charImg)
+      .setColor(color)
       .setFooter(footerText(user.tag), user.avatarURL({dynamic: true}))
-  } else if (charImg && charPfp) {
+  } else {
     return new MessageEmbed()
       .setTitle(charName)
       .addField("Description:", charDesc, false)
-      .setThumbnail(charPfp)
-      .setImage(charImg)
-      .setFooter(footerText(user.tag), user.avatarURL({dynamic: true}))
-  } else if (!charPfp && !charImg) {
-    return new MessageEmbed()
-      .setTitle(charName)
-      .addField("Description:", charDesc, false)
+      .setColor(color)
       .setFooter(footerText(user.tag), user.avatarURL({dynamic: true}))
   }
 }

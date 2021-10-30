@@ -114,7 +114,7 @@ const viewCharacter = {
             interaction.reply(
               {
                 embeds: [
-                  reply.viewCharacter(character.name, character.description, character.pfp,character.img, interaction.user)
+                  reply.viewCharacter(character.name, character.description, character.img, character.color, interaction.user)
                 ]
               }
             )
@@ -122,7 +122,7 @@ const viewCharacter = {
             interaction.reply(
               {
                 embeds: [
-                  reply.viewCharacter(character.name, character.description, false,   interaction.user)
+                  reply.viewCharacter(character.name, character.description, false, character.color, interaction.user)
                 ]
               }
             )

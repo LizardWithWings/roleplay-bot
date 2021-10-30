@@ -72,14 +72,14 @@ const createCharacter = {
             required: true
         },
         {
-          name: "pfp",
-          description: "A small image that will be displayed when your character is viewed!",
+          name: "color",
+          description: "The color of the embed (HEX ONLY, Google \"color picker\").",
           type: "STRING",
           required: false
         },
         {
-          name: "full_img",
-          description: "An image that will appear at the bottom of your character's embed when viewed!",
+          name: "image",
+          description: "A image that represents your character.",
           type: "STRING",
           required: false
         }
@@ -88,8 +88,8 @@ const createCharacter = {
     async execute({interaction}) {
         //Interaction name variable
         var iname = interaction.options.getString("name")
-        var pfp
         var img
+        var color
 
         await connectToDB(false, interaction)
         bioDB = mongoClient.db("rpBios").collection("savedBios")
@@ -108,19 +108,19 @@ const createCharacter = {
           connectToDB(true, interaction)
           return 
         }
-            
-        //Setting the pfp URL (if it exists)
-        if (interaction.options.getString("pfp") !== null) {
-          pfp = interaction.options.getString("image")
-        } else {
-          pfp = false
-        }
 
-        //Setting the img URL (if it exists)
-        if (interaction.options.getString("full_img") !== null) {
-          img = interaction.options.getString("full_img")
+        //Setting the image URL (if it exists)
+        if (interaction.options.getString("image") !== null) {
+          img = interaction.options.getString("image")
         } else {
           img = false
+        }
+
+        //Setting the color
+        if (interaction.options.getString("color") !== null) {
+          color = interaction.options.getString("color")
+        } else {
+          color = "#ffff00"
         }
 
         //Creating a new file
@@ -129,7 +129,7 @@ const createCharacter = {
                 name: interaction.options.getString("name"),
                 ownerId: interaction.member.user.id,
                 description: interaction.options.getString("description"),
-                pfp: pfp,
+                color: color,
                 img: img
             })
         } catch(err) {

@@ -39,7 +39,7 @@ async function connectToDB(closeConnection, interaction)  {
             {
               embeds: 
               [
-                reply.characterExists(interaction.user, err)
+                reply.mongoErrorReply(interaction.user, err)
               ]
             }
           )
@@ -88,7 +88,7 @@ const editCharacter = {
             description: "Change the characters image.",
             type: "STRING",
             required: false
-        },
+        }
     ],
 
     async execute({interaction}) {
@@ -114,18 +114,35 @@ const editCharacter = {
             return
         }
 
+        //Checking for conflicting names in the DB
+        if (newCharName !== null && await bioDB.findOne({name: newCharName, ownerId: interaction.user.id})) {
+          interaction.reply(
+            {
+              embeds: [
+                reply.characterExists(newCharName, interaction.user)
+              ]
+            }
+          )
+          connectToDB(true, interaction)
+          return
+        }
+
         //Update variables if no input was given
         if (newCharName == null) {
-            newCharName = await bioDB.findOne({name: characterName, ownerId: interaction.user.id}).name
+          var x = await bioDB.findOne({name: characterName, ownerId: interaction.user.id})
+          newCharName = x.name
         }
         if (newCharDesc == null) {
-            newCharDesc = await bioDB.findOne({name: characterName, ownerId: interaction.user.id}).description
+          var x = await bioDB.findOne({name: characterName, ownerId: interaction.user.id})
+            newCharDesc = x.description
         }
         if (newCharPfp == null) {
-          newCharPfp = await bioDB.findOne({name: characterName, ownerId: interaction.user.id}).pfp
+          var x = await bioDB.findOne({name: characterName, ownerId: interaction.user.id})
+          newCharPfp = x.pfp
         }
         if (newCharImg == null) {
-          newCharImg = await bioDB.findOne({name: characterName, ownerId: interaction.user.id}).img
+          var x = await bioDB.findOne({name: characterName, ownerId: interaction.user.id})
+          newCharImg = x.img
         }
 
         //Appending character file on MongoDB

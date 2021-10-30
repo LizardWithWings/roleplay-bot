@@ -52,7 +52,7 @@ const mongoErrorReply = (user, err) => {
 const characterExists = (charName, user) => {
   return new MessageEmbed()
     .setTitle("Character Already Exists!")
-    .setDescription("The character named **"+charName+"** already exists! Try ``editcharacter`` instead.")
+    .setDescription("The character named **"+charName+"** already exists!")
     .setColor(errorColor)
     .setFooter(footerText(user.tag), user.avatarURL({dynamic: true}))
 }

@@ -17,6 +17,7 @@ const bot = new slasho.App({
       cmds.editchar, 
       cmds.deletechar,
       cmds.viewchar,
+      cmds.listchars,
       cmds.help,
       //cmds.test
       ]

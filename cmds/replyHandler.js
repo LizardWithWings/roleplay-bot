@@ -149,6 +149,39 @@ const viewCharacterError = (charName, user, err) => {
     .setFooter(footerText(user.tag), user.avatarURL({dynamic: true}))
 }
 
+//List Character Output
+const listCharacters = async (chars, user) => {
+  var message
+
+  chars.forEach(char => {
+    message = message+"\n- "+char.name
+  })
+
+  return new MessageEmbed()
+    .setTitle("Character List")
+    .addField("**Your Characters:**", chars)
+    .setColor(successColor)
+    .setFooter(footerText(user.tag), user.avatarURL({dynamic: true}))
+}
+
+//List Character Error
+const listCharacterError = (user, err) => {
+  return new MessageEmbed()
+    .setTitle("Error in Listing Characters!")
+    .setDescription("There was an error while trying to list your characters. If there is an error below, please send it to Bloxxer#8729:\n```js\n"+err+"\n```")
+    .setColor(errorColor)
+    .setFooter(footerText(user.tag), user.avatarURL({dynamic: true}))
+}
+
+//No Characters Exist
+const noCharacters = (user) => {
+  return new MessageEmbed()
+    .setTitle("You don't have any characters!")
+    .setDescription("You don't have any characters yet! Make some with ``/makecharacter``! If you believe this is an error, please send a DM to Bloxxer#8729.")
+    .setColor(errorColor)
+    .setFooter(footerText(user.tag), user.avatarURL({dynamic: true}))
+}
+
 
 //Exporting functions
 exports.help = help
@@ -166,3 +199,6 @@ exports.characterDeleted = characterDeleted
 exports.characterDeleteError = characterDeleteError
 exports.viewCharacter = viewCharacter
 exports.viewCharacterError = viewCharacterError
+exports.listCharacter = listCharacters
+exports.listCharacterError = listCharacterError
+exports.noCharacters = noCharacters

@@ -60,27 +60,34 @@ const listCharacters = {
     description: "Lists your characters!",
 
     async execute({interaction}) {
-      connectToDB(false, interaction)
-      var chars = await bioDB.find(ownerId: interaction.user.id)
+      await connectToDB(false, interaction)
+      var chars = await bioDB.find({
+        ownerId: interaction.user.id
+      }).toArray()
+      var message = ""
+
       
-      if (chars == null) {
+        for (var att in chars) {
+          message = message+"\n- "+chars[att].name
+        }
+      
+      if (chars == []) {
         interaction.reply(
           {
             embeds:
             [
-              reply.noCharacters(interaction.user)
-            ]
+              reply.noCharacters(interaction.user)            ]
           }
         )
+        await connectToDB(true, interaction)
         return 
       }
-
       try {
         interaction.reply(
           {
             embeds: 
             [
-              reply.listCharacters(chars, interaction.user)
+              reply.listCharacters(message, interaction.user)
             ]
           }
         )
@@ -93,7 +100,11 @@ const listCharacters = {
             ]
           }
         )
+        await connectToDB(true, interaction)
+        return
       }
+      await connectToDB(true, interaction)
+}
 }
 
 exports.cmd = listCharacters

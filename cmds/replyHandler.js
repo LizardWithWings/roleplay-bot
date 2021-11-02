@@ -150,16 +150,10 @@ const viewCharacterError = (charName, user, err) => {
 }
 
 //List Character Output
-const listCharacters = async (chars, user) => {
-  var message
-
-  chars.forEach(char => {
-    message = message+"\n- "+char.name
-  })
-
+const listCharacters = (message, user) => {
   return new MessageEmbed()
     .setTitle("Character List")
-    .addField("**Your Characters:**", chars)
+    .addField("**Your Characters:**", message.toString())
     .setColor(successColor)
     .setFooter(footerText(user.tag), user.avatarURL({dynamic: true}))
 }
@@ -199,6 +193,6 @@ exports.characterDeleted = characterDeleted
 exports.characterDeleteError = characterDeleteError
 exports.viewCharacter = viewCharacter
 exports.viewCharacterError = viewCharacterError
-exports.listCharacter = listCharacters
+exports.listCharacters = listCharacters
 exports.listCharacterError = listCharacterError
 exports.noCharacters = noCharacters

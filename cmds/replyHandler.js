@@ -22,7 +22,7 @@ const help = (user) => {
 
 //Function to make footer text cuz im lazy
 function footerText(user) {
-  return "Command ran by "+user+" | Bot made by Bloxxer#8729"
+  return "Bot made by Bloxxer#8729"
 }
 
 //Mongo disconnect log

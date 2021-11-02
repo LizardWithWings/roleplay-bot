@@ -1,5 +1,5 @@
-//Character Edit Command
-//Command used to modify character data.
+//Character List Command
+//Command used to list the users characters.
 
 require("dotenv").config()
 const { MongoClient } = require("mongodb")
@@ -66,11 +66,12 @@ const listCharacters = {
       }).toArray()
       var message = ""
 
+      //Grab all the names of the users ocs
+      for (var att in chars) {
+        message = message+"\n- "+chars[att].name
+      }
       
-        for (var att in chars) {
-          message = message+"\n- "+chars[att].name
-        }
-      
+      //Checking if the user has no chars
       if (chars == []) {
         interaction.reply(
           {
@@ -82,6 +83,7 @@ const listCharacters = {
         await connectToDB(true, interaction)
         return 
       }
+
       try {
         interaction.reply(
           {
@@ -104,7 +106,7 @@ const listCharacters = {
         return
       }
       await connectToDB(true, interaction)
-}
+    }
 }
 
 exports.cmd = listCharacters

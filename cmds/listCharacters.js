@@ -64,12 +64,6 @@ const listCharacters = {
       var chars = await bioDB.find({
         ownerId: interaction.user.id
       }).toArray()
-      var message = ""
-
-      //Grab all the names of the users ocs
-      for (var att in chars) {
-        message = message+"\n- "+chars[att].name
-      }
       
       //Checking if the user has no chars
       if (chars == []) {
@@ -89,7 +83,7 @@ const listCharacters = {
           {
             embeds: 
             [
-              reply.listCharacters(message, interaction.user)
+              await reply.listCharacters(chars, interaction.user)
             ]
           }
         )

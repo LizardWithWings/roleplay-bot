@@ -150,12 +150,17 @@ const viewCharacterError = (charName, user, err) => {
 }
 
 //List Character Output
-const listCharacters = (message, user) => {
-  return new MessageEmbed()
+const listCharacters = (array, user) => {
+  var embed = new MessageEmbed()
     .setTitle("Character List")
-    .addField("**Your Characters:**", message.toString())
     .setColor(successColor)
     .setFooter(footerText(user.tag), user.avatarURL({dynamic: true}))
+  
+  for (var att in array) {
+    embed.addField(array[att].name, "Color: "+array[att].color+"\nImage URL: "+array[att].img)
+  }
+
+  return embed
 }
 
 //List Character Error

@@ -7,15 +7,16 @@ const errorColor = "#ff0000"
 const successColor = "#00ff00"
 
 //HELP EMBED
-const help = (user) => {
+const info = (user) => {
   return new MessageEmbed()
-    .setTitle("Help Menu/Command List")
-    .setDescription("Welcome to the help menu! This menu shows every command that you can run for this bot.")
+    .setTitle("Info Menu/Command List")
+    .setDescription("Welcome to the info menu! This menu shows every command that you can run for this bot, along with some other stuff.")
     .addField("/createcharacter", "Creates a character with a name and a description.")
     .addField("/editcharacter", "Allows you to edit a characters name, description and/or image.")
     .addField("/deletecharacter", "Deletes a character that has the given name.")
     .addField("/viewcharacter", "Views a character owned by the user given")
     .addField("/listcharacters", "Lists all your character's by names only.")
+    .addField("__Other Stuff__", "- GitHub Page: https://github.com/robloxbloxxer50/roleplay-bot")
     .setColor("ffff00")
     .setFooter(footerText(user.tag), user.avatarURL({dynamic: true}))
 } 
@@ -157,7 +158,11 @@ const listCharacters = (array, user) => {
     .setFooter(footerText(user.tag), user.avatarURL({dynamic: true}))
   
   for (var att in array) {
-    embed.addField(array[att].name, "Color: "+array[att].color+"\nImage URL: "+array[att].img)
+    var i = array[att].img
+    if (!i) {
+      i = "None"
+    }
+    embed.addField(array[att].name, "Color: "+array[att].color+"\nImage URL: "+i)
   }
 
   return embed
@@ -183,7 +188,7 @@ const noCharacters = (user) => {
 
 
 //Exporting functions
-exports.help = help
+exports.info = info
 exports.mongoDisconnect = mongoDisconnect
 exports.mongoConnect = mongoConnect
 exports.mongoError = mongoError

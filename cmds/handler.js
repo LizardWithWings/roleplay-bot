@@ -6,6 +6,6 @@ exports.editchar = require("./editCharacter.js").cmd
 exports.deletechar = require("./deleteCharacter.js").cmd
 exports.viewchar = require("./viewCharacter.js").cmd
 exports.listchars = require("./listCharacters.js").cmd
-exports.help = require("./help.js").cmd
+exports.info = require("./info.js").cmd
 
 exports.test = require("./test.js").cmd

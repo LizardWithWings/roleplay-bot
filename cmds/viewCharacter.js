@@ -101,7 +101,19 @@ const viewCharacter = {
           return 
         }
             
-        
+        if (await bioDB.findOne({name: iname, ownerId: owner.id}).isPrivate == true && interaction.user.id != await bioDB.findOne({name: iname, ownerId: owner.id}).ownerId) {
+          interaction.reply(
+            {
+              embeds:
+              [
+                reply.characterIsPrivate(iname, interaction.user)
+              ]
+            }
+          )
+
+          connectToDB(true, interaction)
+          return
+        }
 
         //Viewing and outputting the character.
         try {

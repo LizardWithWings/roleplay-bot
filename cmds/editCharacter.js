@@ -88,6 +88,12 @@ const editCharacter = {
             description: "Change the characters image.",
             type: "STRING",
             required: false
+        },
+        {
+            name: "private",
+            description: "Change if the character is public or private",
+            type: "BOOLEAN",
+            required: false
         }
     ],
 
@@ -97,6 +103,7 @@ const editCharacter = {
         var newCharDesc = interaction.options.getString("new_char_desc")
         var newColor = interaction.options.getString("new_color")
         var newCharImg = interaction.options.getString("new_char_image")
+        var isPrivate = interaction.options.getBoolean("private")
 
         await connectToDB(false, interaction)
 
@@ -144,12 +151,16 @@ const editCharacter = {
           var x = await bioDB.findOne({name: characterName, ownerId: interaction.user.id})
           newCharImg = x.img
         }
+        if (isPrivate == null) {
+          var x = await bioDB.findOne({name: characterName, ownerId: interaction.user.id})
+          isPrivate = x.isPrivate
+        }
 
         //Appending character file on MongoDB
         try {
             await bioDB.findOneAndUpdate(
               {name: characterName, ownerId: interaction.user.id,},
-              {$set: {name: newCharName, description: newCharDesc, color: newColor, img: newCharImg}},
+              {$set: {name: newCharName, description: newCharDesc, color: newColor, img: newCharImg, isPrivate: isPrivate}},
               {upsert: true}
             )
             interaction.reply(

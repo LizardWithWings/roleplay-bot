@@ -58,15 +58,33 @@ const listCharacters = {
     type: "slash", 
     name: "listcharacters",
     description: "Lists your characters!",
+    options:[
+        {
+            name: "user",
+            description: "The user to pull up a character list for. Leave blank for yourself.",
+            type: "USER",
+            required: false
+        }
+    ],
 
     async execute({interaction}) {
+      const user = interaction.options.getUser("user")
       await connectToDB(false, interaction)
-      var chars = await bioDB.find({
-        ownerId: interaction.user.id
-      }).toArray()
+      var chars
+
+      //Checking if the user declared a user or not
+      if (user == null) {
+        chars = await bioDB.find({
+          ownerId: interaction.user.id
+        }).toArray()
+      } else {
+        chars = await bioDB.find({
+          ownerId: user.id
+        }).toArray()
+      }
       
       //Checking if the user has no chars
-      if (chars == []) {
+      if (JSON.stringify(chars) == "[]") {
         interaction.reply(
           {
             embeds:

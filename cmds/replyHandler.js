@@ -16,7 +16,7 @@ const info = (user) => {
     .addField("/deletecharacter", "Deletes a character that has the given name.")
     .addField("/viewcharacter", "Views a character owned by the user given")
     .addField("/listcharacters", "Lists all your character's by names only.")
-    .addField("__Other Stuff__", "- GitHub Page: https://github.com/robloxbloxxer50/roleplay-bot")
+    .addField("__Other Stuff__", "**GitHub Page:**\nhttps://github.com/robloxbloxxer50/roleplay-bot\n\n**Private Characters**\nPrivate Characters are characters that only you can use /viewcharacter on and only come up in a character list when you run /listcharacters.")
     .setColor("ffff00")
     .setFooter(footerText(user.tag), user.avatarURL({dynamic: true}))
 } 
@@ -180,8 +180,17 @@ const listCharacterError = (user, err) => {
 //No Characters Exist
 const noCharacters = (user) => {
   return new MessageEmbed()
-    .setTitle("You don't have any characters!")
-    .setDescription("You don't have any characters yet! Make some with ``/makecharacter``! If you believe this is an error, please send a DM to Bloxxer#8729.")
+    .setTitle("You or the selected user doesn't have any characters!")
+    .setDescription("You/this person doesn't have any characters yet! Make some with ``/makecharacter``! If you believe this is an error, please send a DM to Bloxxer#8729.")
+    .setColor(errorColor)
+    .setFooter(footerText(user.tag), user.avatarURL({dynamic: true}))
+}
+
+//Access Denied to Private Character
+const characterIsPrivate = (charName, user) => {
+  return new MessageEmbed()
+    .setTitle("This character is private.")
+    .setDescription("The character **"+charName+"** is a private character that is not owned by you. Please ask the owner of this character to run the same command. If you believe this is an error, please DM Bloxxer#8729.")
     .setColor(errorColor)
     .setFooter(footerText(user.tag), user.avatarURL({dynamic: true}))
 }
@@ -206,3 +215,4 @@ exports.viewCharacterError = viewCharacterError
 exports.listCharacters = listCharacters
 exports.listCharacterError = listCharacterError
 exports.noCharacters = noCharacters
+exports.characterIsPrivate = characterIsPrivate

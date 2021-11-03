@@ -72,6 +72,12 @@ const createCharacter = {
             required: true
         },
         {
+          name: "private",
+          description: "Makes the character private. Run /info for more info.",
+          type: "BOOLEAN",
+          required: true
+        },
+        {
           name: "color",
           description: "The color of the embed (HEX ONLY, Google \"color picker\").",
           type: "STRING",
@@ -88,8 +94,10 @@ const createCharacter = {
     async execute({interaction}) {
         //Interaction name variable
         var iname = interaction.options.getString("name")
+        var isPrivate = interaction.options.getBoolean("private")
         var img
         var color
+        
 
         await connectToDB(false, interaction)
         bioDB = mongoClient.db("rpBios").collection("savedBios")
@@ -130,7 +138,8 @@ const createCharacter = {
                 ownerId: interaction.member.user.id,
                 description: interaction.options.getString("description"),
                 color: color,
-                img: img
+                img: img,
+                isPrivate: isPrivate
             })
         } catch(err) {
             interaction.reply(

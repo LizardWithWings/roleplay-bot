@@ -76,7 +76,9 @@ const viewCharacter = {
     async execute({interaction}) {
         //Interaction name and user variables
         var iname = await interaction.options.getString("name")
+        var character
         var owner
+
         if (interaction.options.getUser("user") == null) {
           owner = interaction.user
         } else {
@@ -100,8 +102,10 @@ const viewCharacter = {
           connectToDB(true, interaction)
           return 
         }
+
+        character = await bioDB.findOne({name: iname, ownerId: owner.id})
             
-        if (await bioDB.findOne({name: iname, ownerId: owner.id}).isPrivate == true && interaction.user.id != await bioDB.findOne({name: iname, ownerId: owner.id}).ownerId) {
+        if (character.isPrivate == true && interaction.user.id != character.ownerId) {
           interaction.reply(
             {
               embeds:

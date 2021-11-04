@@ -64,11 +64,18 @@ const listCharacters = {
             description: "The user to pull up a character list for. Leave blank for yourself.",
             type: "USER",
             required: false
+        },
+        {
+            name: "show_private",
+            description: "Set to true to show private characters. Leave blank to set to false.",
+            type: "BOOLEAN",
+            required: false
         }
     ],
 
     async execute({interaction}) {
       const user = interaction.options.getUser("user")
+      const showPrivate = interaction.options.getBoolean("show_private")
       await connectToDB(false, interaction)
       var chars
 
@@ -101,7 +108,7 @@ const listCharacters = {
           {
             embeds: 
             [
-              await reply.listCharacters(chars, interaction.user)
+              await reply.listCharacters(chars, interaction.user, showPrivate)
             ]
           }
         )

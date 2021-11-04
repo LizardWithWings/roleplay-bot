@@ -160,33 +160,33 @@ const listCharacters = (array, user, showPrivate) => {
     for (var att in array) {
         //Handling private characters.
         if (array[att].isPrivate && user.id != array[att].ownerId) {
-          if (!array[att].isPrivate) {
-            var i = array[att].img
-            if (!i) {
-                i = "None"
+            if (!array[att].isPrivate) {
+                var i = array[att].img
+                if (!i) {
+                    i = "None"
+                }
+                embed.addField(array[att].name, "Color: " + array[att].color + "\nImage URL: " + i + "\nPrivate: " + array[att].isPrivate)
             }
-            embed.addField(array[att].name, "Color: "+array[att].color+"\nImage URL: "+i+"\nPrivate: "+array[att].isPrivate)
-          }
         } else if (array[att].isPrivate && user.id == array[att].ownerId && showPrivate) {
             var i = array[att].img
             if (!i) {
                 i = "None"
             }
-            embed.addField(array[att].name, "Color: "+array[att].color+"\nImage URL: "+i+"\nPrivate: "+array[att].isPrivate)
+            embed.addField(array[att].name, "Color: " + array[att].color + "\nImage URL: " + i + "\nPrivate: " + array[att].isPrivate)
         } else if (array[att].isPrivate && user.id == array[att].ownerId && !showPrivate) {
-          if (!array[att].isPrivate) {
-           var i = array[att].img
-            if (!i) {
-                i = "None"
+            if (!array[att].isPrivate) {
+                var i = array[att].img
+                if (!i) {
+                    i = "None"
+                }
+                embed.addField(array[att].name, "Color: " + array[att].color + "\nImage URL: " + i + "\nPrivate: " + array[att].isPrivate)
             }
-            embed.addField(array[att].name, "Color: "+array[att].color+"\nImage URL: "+i+"\nPrivate: "+array[att].isPrivate)
-          }
         } else if (!array[att].isPrivate) {
-          var i = array[att].img
+            var i = array[att].img
             if (!i) {
                 i = "None"
             }
-            embed.addField(array[att].name, "Color: "+array[att].color+"\nImage URL: "+i+"\nPrivate: "+array[att].isPrivate)
+            embed.addField(array[att].name, "Color: " + array[att].color + "\nImage URL: " + i + "\nPrivate: " + array[att].isPrivate)
         }
     }
     return embed

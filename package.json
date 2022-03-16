@@ -10,5 +10,6 @@
   },
   "scripts": {
     "dev": "node bot-dev.js"
+    "start": "node bot.js"
   }
 }

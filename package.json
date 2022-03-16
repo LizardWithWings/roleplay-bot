@@ -9,7 +9,7 @@
     "node": "16.x"
   },
   "scripts": {
-    "dev": "node bot-dev.js"
+    "dev": "node bot-dev.js",
     "start": "node bot.js"
   }
 }
